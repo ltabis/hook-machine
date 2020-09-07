@@ -5,15 +5,17 @@ OBJ=	$(SRC:.c=.o)
 
 NAME=	hook-machine
 
+CFLAGS= -g -W -Wall -Wextra -iquote include/
+
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	 gcc -o $(NAME) $(OBJ)
+	 gcc $(OBJ) -o $(NAME) $(CFLAGS)
 
 clean:
-	rm $(OBJ)
+	rm -f $(OBJ)
 
 fclean: clean
-	rm $(NAME)
+	rm -f $(NAME)
 
 re:	fclean all
