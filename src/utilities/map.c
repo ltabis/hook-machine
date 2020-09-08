@@ -1,6 +1,8 @@
 // map.c
 // map implementation.
 
+#include "map.h"
+
 map_t *map_init(void)
 {
   map_t *map = malloc(sizeof(map_t));
@@ -21,8 +23,13 @@ map_t *map_push(map_t *map, const char *key, void *value, size_t value_size)
   if (!node || !key)
     return map;
 
-  node->key = key;
-  node->value = value;
+  node->key = strdup(key);
+  node->value = malloc(sizeof(value_size));
+
+  if (!node->value)
+    return map;
+
+  memcpy(node->value, value, sizeof(value_size));
   node->value_size = value_size;
   node->next = map;
 
@@ -77,29 +84,40 @@ size_t map_size(map_t *map)
   if (!map)
     return 0;
 
-  size_t size = 1;
+  size_t size = 0;
 
-  for (; !map->key; map = map->next, ++size);
+  for (; map->key; map = map->next, ++size);
   return size;
 }
 
-void debug_map(map_t *map)
+void map_debug(map_t *map)
 {
   if (!map) {
     fprintf(stderr, "The map is unititialized.\n");
     return;
   }
 
+  if (!map_size(map)) {
+    printf("The map is empty.\n");
+    return;
+  }
+
   printf("Map total size: %ld\n", map_size(map));
   printf("Items:\n");
-  for (; !map->key; map = map->next)
+  for (; map->key; map = map->next)
     printf("{ key: %s, value_size: %ld }\n", map->key, map->value_size);
 }
 
 void map_destroy(map_t *map)
 {
+  if (map_size(map) == 1) {
+    destroy_node(map->next);
+    destroy_node(map);
+    return;
+  }
+
   for (map_t *tmp = NULL; map->key; map = tmp) {
-    tmp = map->next
+    tmp = map->next;
     free(map->key);
     free(map->value);
     free(map);

@@ -1,5 +1,6 @@
 
-SRC=	$(wildcard src/*.c)
+SRC=	$(wildcard src/*.c) \
+	$(wildcard src/utilities/*.c)
 
 OBJ=	$(SRC:.c=.o)
 

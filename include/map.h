@@ -22,7 +22,7 @@ map_t *map_remove(map_t *map, const char *key);
 void *map_get(map_t *map, const char *key);
 size_t map_size(map_t *map);
 
-void debug_map(map_t *map);
+void map_debug(map_t *map);
 
 void map_destroy(map_t *map);
 
