@@ -1,13 +1,35 @@
 // hook_machine.c
 // Hook machine implementation.
 
+#include <string.h>
+
 #include "hook_machine.h"
 #include "status.h"
 
-/* register a plugin into the hook machine. */
-int register_plugin(hm_t *hm, plugin_t *plugin)
+hm_t *init_hook_machine(void)
 {
-  if (!hm || !plugin)
+  hm_t *hm = malloc(sizeof(hm_t));
+
+  if (!hm)
+    return NULL;
+
+  // no plugins and size of 0.
+  memset(hm, 0, sizeof(hm_t));
+
+  return hm;
+}
+
+/* register a plugin into the hook machine. */
+int register_plugin(hm_t *hm,
+		    const char *name,
+		    void (*hook)(const char *hook_string))
+{
+  if (!hm)
+    return PTR_ERROR;
+
+  plugin_t *plugin = init_plugin(name, hook);
+  
+  if (!plugin)
     return PTR_ERROR;
 
   plugin_t **n_ptr = malloc(sizeof(plugin_t *) * (hm->size + 1));
@@ -16,9 +38,9 @@ int register_plugin(hm_t *hm, plugin_t *plugin)
     return MALLOC_ERROR;
 
   // deleting the array of plugins.
-  destroy_hook_machine(hm);
+  destroy_registered_plugins(hm);
 
-  // copying all pointers.
+  // copying all pointers and adding the new plugin to the list.
   for (size_t i = 0; i < hm->size; ++i)
     n_ptr[i] = hm->plugins[i];
   n_ptr[hm->size++] = plugin;
@@ -33,7 +55,7 @@ int debug_hook_machine(const hm_t *hm)
   if (!hm)
     return PTR_ERROR;
 
-  // displaying data about plugins.
+  // displaying plugin data.
   printf("%ld plugins found.\n", hm->size);
   for (size_t i = 0; i < hm->size; ++i)
     printf("- %s\n", hm->plugins[i]->name);
@@ -55,6 +77,18 @@ int emit(hm_t *hm, const char *message)
 }
 
 int destroy_hook_machine(hm_t *hm)
+{
+  if (!hm)
+    return PTR_ERROR;
+
+  if (destroy_registered_plugins(hm) > SUCCESS)
+    return ERROR;
+  free(hm);
+
+  return SUCCESS;
+}
+
+int destroy_registered_plugins(hm_t *hm)
 {
   if (!hm)
     return PTR_ERROR;

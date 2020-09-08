@@ -14,35 +14,34 @@ void my_hook(const char *hook_string)
 
 int main(void)
 {
-  hm_t hm = { NULL, 0 };
-  plugin_t *plugin = init_plugin("my plugin", &my_hook);
+  hm_t *hm = init_hook_machine();
 
-  if (!plugin) {
-    fprintf(stderr, "Couldn't initialize the plugin.");
+  if (!hm) {
+    fprintf(stderr, "Couldn't create the hook machine.");
     return ERROR;
   }
 
   // debuging.
-  debug_hook_machine(&hm);
+  debug_hook_machine(hm);
 
   // registering the plugin into the machine.
-  if (register_plugin(&hm, plugin)) {
+  if (register_plugin(hm, "my plugin", &my_hook)) {
     fprintf(stderr, "Couldn't register the plugin.");
     return ERROR;
   }
 
   // checking if the plugin has been registered.
-  debug_hook_machine(&hm);
+  debug_hook_machine(hm);
 
   // sending an event.
   printf("Sending 'random event'.\n");
-  emit(&hm, "random event");
+  emit(hm, "random event");
 
   // sending an event.
   printf("Sending 'my hook!'.\n");
-  emit(&hm, "my hook!");
+  emit(hm, "my hook!");
 
   // destroying the machine.
-  destroy_hook_machine(&hm);
+  destroy_hook_machine(hm);
   return 0;
 }

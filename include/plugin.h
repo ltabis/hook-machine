@@ -8,6 +8,7 @@
 
 typedef struct plugin_s {
   char *name;
+  /* the callback should be called using va_args  */
   void (*hook)(const char *hook_string);
 } plugin_t;
 
