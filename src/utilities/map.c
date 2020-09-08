@@ -3,53 +3,46 @@
 
 #include "map.h"
 
-map_t *map_init(void)
+ptr_map_t *map_init(void)
 {
-  map_t *map = malloc(sizeof(map_t));
+  ptr_map_t *map = malloc(sizeof(ptr_map_t));
 
   if (!map)
     return NULL;
 
-  return memset(map, 0, sizeof(map_t));
+  return memset(map, 0, sizeof(ptr_map_t));
 }
 
-map_t *map_push(map_t *map, const char *key, void *value, size_t value_size)
+ptr_map_t *map_push(ptr_map_t *map, const char *key, void *ptr)
 {
   if (!map)
     return NULL;
 
-  map_t *node = malloc(sizeof(map_t));
+  ptr_map_t *node = malloc(sizeof(ptr_map_t));
   
   if (!node || !key)
     return map;
 
   node->key = strdup(key);
-  node->value = malloc(sizeof(value_size));
-
-  if (!node->value)
-    return map;
-
-  memcpy(node->value, value, sizeof(value_size));
-  node->value_size = value_size;
+  node->ptr = ptr;
   node->next = map;
 
   return node;
 }
 
-void destroy_node(map_t *map)
+void destroy_node(ptr_map_t *map)
 {
     free(map->key);
-    free(map->value);
     free(map);  
 }
 
-map_t *map_remove(map_t *map, const char *key)
+ptr_map_t *map_remove(ptr_map_t *map, const char *key)
 {
   if (!map || !key)
     return map;
 
-  map_t *last_node = NULL;
-  map_t *head = map;
+  ptr_map_t *last_node = NULL;
+  ptr_map_t *head = map;
 
   for (; map->key; last_node = map, map = map->next)
     if (!strcmp(key, map->key))
@@ -67,19 +60,19 @@ map_t *map_remove(map_t *map, const char *key)
   return head;
 }
 
-void *map_get(map_t *map, const char *key)
+void *map_get(ptr_map_t *map, const char *key)
 {
   if (!map || !key)
     return NULL;
 
   for (; map->key; map = map->next)
     if (!strcmp(key, map->key))
-      return map->value;
+      return map->ptr;
 
   return NULL;
 }
 
-size_t map_size(map_t *map)
+size_t map_size(ptr_map_t *map)
 {
   if (!map)
     return 0;
@@ -90,7 +83,7 @@ size_t map_size(map_t *map)
   return size;
 }
 
-void map_debug(map_t *map)
+void map_debug(ptr_map_t *map)
 {
   if (!map) {
     fprintf(stderr, "The map is unititialized.\n");
@@ -105,10 +98,10 @@ void map_debug(map_t *map)
   printf("Map total size: %ld\n", map_size(map));
   printf("Items:\n");
   for (; map->key; map = map->next)
-    printf("{ key: %s, value_size: %ld }\n", map->key, map->value_size);
+    printf("{ key: %s, ptr: %p }\n", map->key, map->ptr);
 }
 
-void map_destroy(map_t *map)
+void map_destroy(ptr_map_t *map)
 {
   if (map_size(map) == 1) {
     destroy_node(map->next);
@@ -116,10 +109,10 @@ void map_destroy(map_t *map)
     return;
   }
 
-  for (map_t *tmp = NULL; map->key; map = tmp) {
+  for (ptr_map_t *tmp = NULL; map->key; map = tmp) {
     tmp = map->next;
     free(map->key);
-    free(map->value);
+    free(map->ptr);
     free(map);
   }
 

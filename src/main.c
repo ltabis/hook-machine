@@ -5,11 +5,11 @@
 
 #include "hook_machine.h"
 #include "status.h"
+#include "map.h"
 
-void my_hook(const char *hook_string)
+void my_hook(void)
 {
-  if (!strcmp(hook_string, "my hook!"))
-    printf("My hook event received!\n");
+  printf("I'm doing stuff!\n");
 }
 
 int main(void)
@@ -25,7 +25,7 @@ int main(void)
   debug_hook_machine(hm);
 
   // registering the plugin into the machine.
-  if (register_plugin(hm, "my plugin", &my_hook)) {
+  if (register_plugin(hm, "my plugin")) {
     fprintf(stderr, "Couldn't register the plugin.");
     return ERROR;
   }
@@ -33,13 +33,16 @@ int main(void)
   // checking if the plugin has been registered.
   debug_hook_machine(hm);
 
+  // adding a hook to the registered plugin.
+  add_hook_to_plugin(hm, "my plugin", "my hook", &my_hook);
+
   // sending an event.
   printf("Sending 'random event'.\n");
   emit(hm, "random event");
 
   // sending an event.
-  printf("Sending 'my hook!'.\n");
-  emit(hm, "my hook!");
+  printf("Sending 'my hook'.\n");
+  emit(hm, "my hook");
 
   // destroying the machine.
   destroy_hook_machine(hm);

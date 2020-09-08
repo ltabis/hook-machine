@@ -14,20 +14,43 @@ hm_t *init_hook_machine(void)
     return NULL;
 
   // no plugins and size of 0.
-  memset(hm, 0, sizeof(hm_t));
-
-  return hm;
+  return memset(hm, 0, sizeof(hm_t));
 }
 
-/* register a plugin into the hook machine. */
-int register_plugin(hm_t *hm,
-		    const char *name,
-		    void (*hook)(const char *hook_string))
+int destroy_hook_machine(hm_t *hm)
 {
   if (!hm)
     return PTR_ERROR;
 
-  plugin_t *plugin = init_plugin(name, hook);
+  if (destroy_registered_plugins(hm) > SUCCESS)
+    return ERROR;
+  free(hm);
+
+  return SUCCESS;
+}
+
+int destroy_registered_plugins(hm_t *hm)
+{
+  if (!hm)
+    return PTR_ERROR;
+
+  // destroying all plugins and freeing memory of the machine.
+  for (size_t i = 0; i < hm->size; ++i)
+    destroy_plugin(hm->plugins[i]);
+
+  if (hm->plugins)
+    free(hm->plugins);
+
+  return SUCCESS;
+}
+
+/* register a plugin into the hook machine. */
+int register_plugin(hm_t *hm, const char *name)
+{
+  if (!hm)
+    return PTR_ERROR;
+
+  plugin_t *plugin = init_plugin(name);
   
   if (!plugin)
     return PTR_ERROR;
@@ -63,42 +86,47 @@ int debug_hook_machine(const hm_t *hm)
   return SUCCESS;
 }
 
-int emit(hm_t *hm, const char *message)
+int emit(hm_t *hm, const char *hook_name)
 {
-  if (!hm || !message)
+  if (!hm || !hook_name)
     return PTR_ERROR;
 
   // emiting the message to all plugins.
   // ! there is a way to optimize this.
-  for (size_t i = 0; i < hm->size; ++i)
-    hm->plugins[i]->hook(message);
+  for (size_t i = 0; i < hm->size; ++i) {
+    void (*hook)(void) = map_get(hm->plugins[i]->hooks, hook_name);
+
+    // executing the hook if it exists inside the current plugin.
+    if (hook) (*hook)();
+  }
 
   return SUCCESS;
 }
 
-int destroy_hook_machine(hm_t *hm)
+plugin_t *get_plugin(hm_t *hm, const char *plugin_name)
 {
-  if (!hm)
-    return PTR_ERROR;
+  if (!hm || !plugin_name)
+    return NULL;
 
-  if (destroy_registered_plugins(hm) > SUCCESS)
-    return ERROR;
-  free(hm);
+  for (size_t i = 0; i < hm->size; ++i)
+    if (!strcmp(hm->plugins[i]->name, plugin_name))
+      return hm->plugins[i];
 
-  return SUCCESS;
+  return NULL;
 }
 
-int destroy_registered_plugins(hm_t *hm)
+void add_hook_to_plugin(hm_t *hm,
+	      const char *plugin_name,
+	      const char *hook_name,
+	      void (*hook)(void))
 {
-  if (!hm)
-    return PTR_ERROR;
+  if (!hm || !plugin_name || !hook)
+    return;
 
-  // destroying all plugins and freeing memory of the machine.
-  for (size_t i = 0; i < hm->size; ++i)
-    destroy_plugin(hm->plugins[i]);
+  plugin_t *plugin = get_plugin(hm, plugin_name);
 
-  if (hm->plugins)
-    free(hm->plugins);
+  if (!plugin)
+    return;
 
-  return SUCCESS;
+  add_hook(plugin, hook_name, hook);
 }

@@ -6,9 +6,9 @@
 #include "plugin.h"
 #include "status.h"
 
-plugin_t *init_plugin(const char *name, void (*hook)(const char *hook_string))
+plugin_t *init_plugin(const char *name)
 {
-  if (!name || !hook)
+  if (!name)
     return NULL;
 
   // allocating memory.
@@ -19,13 +19,22 @@ plugin_t *init_plugin(const char *name, void (*hook)(const char *hook_string))
 
   // filling the struct with parameters.
   plugin->name = strdup(name);
-  plugin->hook = hook;
+  plugin->hooks = map_init();
 
-  if (!plugin->name)
+  if (!plugin->name || !plugin->hooks)
     return NULL;
 
   return plugin;
 }
+
+void add_hook(plugin_t *plugin,
+	      const char *hook_name,
+	      void (*hook)(void))
+{
+  // add a hook to the list of hooks.
+  plugin->hooks = map_push(plugin->hooks, hook_name, hook);
+}
+
 
 int destroy_plugin(plugin_t *plugin)
 {
@@ -33,6 +42,7 @@ int destroy_plugin(plugin_t *plugin)
     return PTR_ERROR;
 
   // freeing plugin memory.
+  map_destroy(plugin->hooks);
   free(plugin->name);
   free(plugin);
 
