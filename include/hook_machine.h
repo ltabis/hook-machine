@@ -18,7 +18,7 @@ typedef struct hook_machine_s {
 int register_plugin(hm_t *hm, plugin_t *plugin);
 int debug_hook_machine(const hm_t *hm);
 
-// void emit(hm_t *hm, const char *hook);
-// void destroy_hoo_machine(hm_t *hm);
+int emit(hm_t *hm, const char *message);
+int destroy_hook_machine(hm_t *hm);
 
 #endif /* ! HOOK_MACHINE_H_ */

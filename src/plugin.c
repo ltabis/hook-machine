@@ -26,3 +26,15 @@ plugin_t *init_plugin(const char *name, void (*hook)(const char *hook_string))
 
   return plugin;
 }
+
+int destroy_plugin(plugin_t *plugin)
+{
+  if (!plugin)
+    return PTR_ERROR;
+
+  // freeing plugin memory.
+  free(plugin->name);
+  free(plugin);
+
+  return SUCCESS;
+}

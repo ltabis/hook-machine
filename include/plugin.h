@@ -7,12 +7,11 @@
 #include <stdlib.h>
 
 typedef struct plugin_s {
-  const char *name;
+  char *name;
   void (*hook)(const char *hook_string);
 } plugin_t;
 
 plugin_t *init_plugin(const char *name, void (*hook)(const char *hook_string));
-
-// void destroy_plugin(plugin_t *plugin);
+int destroy_plugin(plugin_t *plugin);
 
 #endif /* ! PLUGIN_H_ */
