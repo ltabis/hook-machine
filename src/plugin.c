@@ -27,15 +27,6 @@ plugin_t *init_plugin(const char *name)
   return plugin;
 }
 
-void add_hook(plugin_t *plugin,
-	      const char *hook_name,
-	      void (*hook)(void))
-{
-  // add a hook to the list of hooks.
-  plugin->hooks = map_push(plugin->hooks, hook_name, hook);
-}
-
-
 int destroy_plugin(plugin_t *plugin)
 {
   if (!plugin)
@@ -47,4 +38,19 @@ int destroy_plugin(plugin_t *plugin)
   free(plugin);
 
   return SUCCESS;
+}
+
+void debug_plugin(plugin_t *plugin)
+{
+  if (!plugin || !map_size(plugin->hooks))
+    return;
+  map_debug(plugin->hooks);
+}
+
+void add_hook(plugin_t *plugin,
+	      const char *hook_name,
+	      void (*hook)(void))
+{
+  // add a hook to the list of hooks.
+  plugin->hooks = map_push(plugin->hooks, hook_name, hook);
 }

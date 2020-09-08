@@ -16,6 +16,8 @@ typedef struct plugin_s {
 plugin_t *init_plugin(const char *name);
 int destroy_plugin(plugin_t *plugin);
 
+void debug_plugin(plugin_t *plugin);
+
 void add_hook(plugin_t *plugin,
               const char *hook_name,
               void (*hook)(void));

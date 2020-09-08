@@ -60,15 +60,15 @@ int register_plugin(hm_t *hm, const char *name)
   if (!n_ptr)
     return MALLOC_ERROR;
 
-  // deleting the array of plugins.
-  destroy_registered_plugins(hm);
-
-  // copying all pointers and adding the new plugin to the list.
+  // copying all pointers.
   for (size_t i = 0; i < hm->size; ++i)
     n_ptr[i] = hm->plugins[i];
+
+  // adding the new plugin to the list.
   n_ptr[hm->size++] = plugin;
 
   // reassigning the pointer.
+  free(hm->plugins);
   hm->plugins = n_ptr;
   return SUCCESS;
 }
@@ -79,9 +79,11 @@ int debug_hook_machine(const hm_t *hm)
     return PTR_ERROR;
 
   // displaying plugin data.
-  printf("%ld plugins found.\n", hm->size);
-  for (size_t i = 0; i < hm->size; ++i)
+  printf("%ld plugins found.\n\n", hm->size);
+  for (size_t i = 0; i < hm->size; ++i) {
     printf("- %s\n", hm->plugins[i]->name);
+    debug_plugin(hm->plugins[i]);
+  }
 
   return SUCCESS;
 }

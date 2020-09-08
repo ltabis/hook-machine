@@ -15,8 +15,8 @@ ptr_map_t *map_init(void)
 
 ptr_map_t *map_push(ptr_map_t *map, const char *key, void *ptr)
 {
-  if (!map)
-    return NULL;
+  if (!map || map_get(map, key))
+    return map;
 
   ptr_map_t *node = malloc(sizeof(ptr_map_t));
   
@@ -91,14 +91,13 @@ void map_debug(ptr_map_t *map)
   }
 
   if (!map_size(map)) {
-    printf("The map is empty.\n");
+    printf("No hook registered.\n");
     return;
   }
 
-  printf("Map total size: %ld\n", map_size(map));
-  printf("Items:\n");
+  printf("%ld hook(s) registered.\n", map_size(map));
   for (; map->key; map = map->next)
-    printf("{ key: %s, ptr: %p }\n", map->key, map->ptr);
+    printf("  { key: '%s', ptr: '%p' }\n", map->key, map->ptr);
 }
 
 void map_destroy(ptr_map_t *map)
