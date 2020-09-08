@@ -1,7 +1,7 @@
 # hook-machine
 A program that register plugins, which can be used using hooks.
 
-v1.0
+![](https://img.shields.io/github/v/release/ltabis/hook-machine?style=for-the-badge)
 
 ## compile & launch
 
