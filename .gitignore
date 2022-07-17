@@ -1,3 +1,5 @@
 *.o
 *~
 hook-machine
+
+*.log

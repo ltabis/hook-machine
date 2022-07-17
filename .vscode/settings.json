@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.vsl": "rhai",
+        "string.h": "c",
+        "status.h": "c",
+        "hook_machine.h": "c"
+    }
+}
