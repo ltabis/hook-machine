@@ -1,45 +1,31 @@
 # hook-machine
-A program that register plugins, which can be used using hooks.
+A program (not yet a library) that register plugins, which can be used using hooks.
 
 ![](https://img.shields.io/github/v/release/ltabis/hook-machine?style=for-the-badge)
 
-## compile & launch
+<!-- TODO: add a simple example -->
 
-```sh
-$ make ; ./hook-machine
-```
-
-## makefile rules
-
-```sh
-$ make        # recompile changed files and link them.
-$ make clean  # clean the repository from object file.
-$ make fclean # same as above and delete the binary. 
-$ make re     # cleans everything and recompile the program.
-```
-
-## how to use
+## How to use
 
 start by building the machine using
 ```c
 hm_t *hook_machine = init_hook_machine();
 ```
 
-### add a plugin
+### Add a plugin
 
-.so / .dll loading isn't yet supported.
-You can set your code directly in the ``src/main.c`` file.
+I didn't made a library from this code yet, so to test it you can set your code directly in the ``src/main.c`` file.
 
-Register your plugin using
+Register your plugin using:
 
 ```c
-// will create a plugin named "my plugin".
-register_plugin(hook_machine, "my plugin");
+// will create a plugin named "my-plugin".
+register_plugin(hook_machine, "my-plugin");
 ```
 
-### add a hook
+### Add a hook
 
-to add a hook to a plugin, use the following syntax
+To add a hook to a plugin, use the following syntax
 ```c
 // this is the callback we will use.
 void my_hook(void)
@@ -47,44 +33,44 @@ void my_hook(void)
   printf("I'm doing stuff!\n");
 }
 
-// here, we register a hook called "my hook" and attaching it to the
-// plugin "my plugin". when the hook is called, the machine will
+// here, we register a hook called "my-hook" and attaching it to the
+// plugin "my-plugin". when the hook is called, the machine will
 // use the my_hook function.
-add_hook_to_plugin(hook_machine, "my plugin", "my hook", &my_hook);
+add_hook_to_plugin(hook_machine, "my-plugin", "my-hook", &my_hook);
 ```
 
-### trigger a hook
+### Trigger a hook
 
-to trigger a hook, use the following syntax
+To trigger a hook, use the following syntax:
 ```c
 // following the last example, this hook won't call anything.
 emit(hook_machine, "event");
 
 // following the last example, this hook will call my_hook(),
-// registered in the plugin "my plugin".
-emit(hook_machine, "my hook");
+// registered in the plugin "-plugin".
+emit(hook_machine, "my-hook");
 ```
 
-### handle memory
+### Handle memory
 
-to clean your memory, you need to destroy your machine when you don't
+To clean your memory, you need to destroy your machine when you don't
 need it anymore.
 
-you just have to use
+You just have to use:
 ```c
 destroy_hook_machine(hook_machine);
 ```
 
-this function will free all resources.
+This function will free all resources.
 
-### debug
+### Debug
 
-to debug your machine, use
+To debug your machine, use:
 ```c
 debug_hook_machine(hm);
 ```
 
-you will get an output showing all plugins and their content.
+You will get an output showing all plugins and their content.
 
 ```
 3 plugins found.
@@ -96,7 +82,26 @@ you will get an output showing all plugins and their content.
 - my plugin 3
 ```
 
-## dependencies
+## Contribute
+
+Any PR is welcome ! If you find a problem, don't hesitate to open an issue.
+
+### Compile & launch
+
+```sh
+$ make && ./hook-machine
+```
+
+### Makefile rules
+
+```sh
+$ make        # recompile changed files and link them.
+$ make clean  # clean the repository from object file.
+$ make fclean # same as above and delete the binary. 
+$ make re     # cleans everything and recompile the program.
+```
+
+## Dependencies
 
 - gcc
 - makefile
