@@ -51,7 +51,7 @@ int register_plugin(hm_t *hm, const char *name)
     return PTR_ERROR;
 
   plugin_t *plugin = init_plugin(name);
-  
+
   if (!plugin)
     return PTR_ERROR;
 
@@ -80,7 +80,8 @@ int debug_hook_machine(const hm_t *hm)
 
   // displaying plugin data.
   printf("%ld plugins found.\n\n", hm->size);
-  for (size_t i = 0; i < hm->size; ++i) {
+  for (size_t i = 0; i < hm->size; ++i)
+  {
     printf("- %s\n", hm->plugins[i]->name);
     debug_plugin(hm->plugins[i]);
   }
@@ -93,13 +94,15 @@ int emit(hm_t *hm, const char *hook_name)
   if (!hm || !hook_name)
     return PTR_ERROR;
 
-  // emiting the message to all plugins.
+  // emitting the message to all plugins.
   // ! there is a way to optimize this.
-  for (size_t i = 0; i < hm->size; ++i) {
+  for (size_t i = 0; i < hm->size; ++i)
+  {
     void (*hook)(void) = map_get(hm->plugins[i]->hooks, hook_name);
 
     // executing the hook if it exists inside the current plugin.
-    if (hook) (*hook)();
+    if (hook)
+      (*hook)();
   }
 
   return SUCCESS;
@@ -118,9 +121,9 @@ plugin_t *get_plugin(hm_t *hm, const char *plugin_name)
 }
 
 void add_hook_to_plugin(hm_t *hm,
-	      const char *plugin_name,
-	      const char *hook_name,
-	      void (*hook)(void))
+                        const char *plugin_name,
+                        const char *hook_name,
+                        void (*hook)(void))
 {
   if (!hm || !plugin_name || !hook)
     return;
