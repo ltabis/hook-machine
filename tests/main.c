@@ -16,15 +16,15 @@ int main(void)
 {
   hm_t *hm = init_hook_machine();
 
-  if (!hm) {
+  if (!hm)
+  {
     fprintf(stderr, "Couldn't create the hook machine.");
     return ERROR;
   }
 
   // registering the plugin into the machine.
-  if (register_plugin(hm, "my plugin")   ||
-      register_plugin(hm, "my plugin 2") ||
-      register_plugin(hm, "my plugin 3")) {
+  if (register_plugin(hm, "my plugin") || register_plugin(hm, "my plugin 2") || register_plugin(hm, "my plugin 3"))
+  {
     fprintf(stderr, "Couldn't register the plugin.");
     return ERROR;
   }

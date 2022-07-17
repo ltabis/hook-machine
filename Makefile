@@ -1,22 +1,32 @@
 
-SRC=	$(wildcard src/*.c) \
+SRC = $(wildcard src/*.c) \
 	$(wildcard src/utilities/*.c)
 
-OBJ=	$(SRC:.c=.o)
+TEST = $(wildcard tests/*.c)
 
-NAME=	hook-machine
+SRC_OBJ = $(SRC:.c=.o)
+TEST_OBJ = $(TEST:.c=.o)
 
-CFLAGS= -g -W -Wall -Wextra -iquote include/
+NAME = hm
+LIB_NAME = lib$(NAME).a
+TEST_NAME = test-$(NAME)
 
-all: $(NAME)
+CFLAGS = -g -W -Wall -Wextra -iquote include/
 
-$(NAME): $(OBJ)
-	 gcc $(OBJ) -o $(NAME) $(CFLAGS)
+all : $(NAME)
+
+$(NAME) : $(SRC_OBJ)
+	ar rc $(LIB_NAME) $(SRC_OBJ)
+
+test : $(NAME) $(TEST_OBJ)
+	gcc -o $(TEST_NAME) $(TEST_OBJ) -L. -l$(NAME) $(CFLAGS)
 
 clean:
 	rm -f $(OBJ)
+	rm -f $(TEST_OBJ)
 
-fclean: clean
-	rm -f $(NAME)
+fclean : clean
+	rm -f $(TEST_NAME)
+	rm -f $(LIB_NAME)
 
-re:	fclean all
+re : fclean all
