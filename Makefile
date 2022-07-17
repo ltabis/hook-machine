@@ -1,7 +1,7 @@
 
-SRC = src/hook_machine.c \
-	src/plugin.c \
-	src/utilities/map.c \
+SRC = src/hook_machine.c 	\
+	src/plugin.c 			\
+	src/utilities/map.c
 
 TEST = tests/main.c
 

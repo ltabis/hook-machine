@@ -1,5 +1,6 @@
 *.o
+*.a
 *~
-hook-machine
+test-hm
 
 *.log
