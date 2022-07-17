@@ -1,8 +1,9 @@
 
-SRC = $(wildcard src/*.c) \
-	$(wildcard src/utilities/*.c)
+SRC = src/hook_machine.c \
+	src/plugin.c \
+	src/utilities/map.c \
 
-TEST = $(wildcard tests/*.c)
+TEST = tests/main.c
 
 SRC_OBJ = $(SRC:.c=.o)
 TEST_OBJ = $(TEST:.c=.o)
